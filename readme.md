@@ -1,6 +1,6 @@
 
 
 ## Flow Diagram
-![alt text](</images/Flow diagram.png>)
+![alt text](</Resources/images/Flow diagram.png>)
 
 

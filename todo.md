@@ -9,5 +9,5 @@
 
 
 # TODO: Implementation
-- [] Trial and testing before implementation.
+- [x] Workspace creation
 - [] Coding and configuring the components.

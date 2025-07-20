@@ -1,0 +1,67 @@
+# Ignore Python virtual environments in any subfolder
+**/venv/
+**/.venv/
+**/env/
+**/.env/
+
+# Ignore Python bytecode and cache
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+
+# Ignore pip and setuptools files
+**/pip-log.txt
+**/pip-delete-this-directory.txt
+
+# Ignore Python egg files
+**/*.egg
+**/*.egg-info/
+**/dist/
+**/build/
+**/*.manifest
+**/*.spec
+
+# Ignore environment variable files
+**/.env
+**/.env.*
+
+# Ignore Jupyter Notebook checkpoints
+**/.ipynb_checkpoints
+
+# Ignore coverage reports
+**/.coverage
+**/.coverage.*
+**/htmlcov/
+**/.pytest_cache/
+
+# Ignore mypy and Pyright type checking files
+**/.mypy_cache/
+**/.pyright/
+
+# Ignore test and debug artifacts
+**/.tox/
+**/.nox/
+**/.hypothesis/
+
+# Ignore IDE/editor config files
+**/.vscode/
+**/.idea/
+**/*.sublime-workspace
+**/*.sublime-project
+
+
+# Ignore Angular build and dependency folders in any subdirectory
+**/node_modules/
+**/dist/
+**/.angular/
+**/.angular-cache/
+**/.eslintcache
+
+# Ignore Angular environment files
+**/src/environments/environment*.ts
+
+# Ignore Angular IDE/editor files
+**/.vscode/
+**/.idea/
+**/*.sublime-workspace
+**/*.sublime-project

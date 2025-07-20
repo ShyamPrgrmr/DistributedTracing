@@ -36,7 +36,7 @@
             * If so, Figure out which in out traffic data will come in traces ?
                 * Will there be headers in request from which we can fetch trace id ?  
 
-## Approach_1 [References](https://chatgpt.com/share/687be96c-cb2c-8010-a7c4-9ff0935c79a8)d
+## Approach_1 [References](https://chatgpt.com/share/687be96c-cb2c-8010-a7c4-9ff0935c79a8)sds
 1. Component to use
     * (Configuration) Opentelemetry agent - To collect traces
         * Java : opentelemetry-javaagent.jar 
@@ -47,4 +47,14 @@
     * (Development) Custom converter - Json encoded with protobuf to json
     * (Development) Custom Distributed Tracing App (DT APP) - to consume file from 
     * (Development) Kafka cluster to connect different components. 
-2. FlowApp -> OpenTelemetry Agent -> OTLPKafkaBridge -> Kafka -> OpenTelemetry Collector -> Kafka -> OTLPJsonConverter -> Kafka -> Custom DT App -> Database. 
+2. Flow
+App
+  └──> OpenTelemetry Agent
+         └──> OTLP-Kafka Bridge (Protobuf)
+                 └──> Kafka Topic: otlp-protobuf
+                         └──> OpenTelemetry Collector
+                                 └──> Kafka Topic: otlp-json-protobuf
+                                         └──> Custom JSON Converter
+                                                 └──> Kafka Topic: clean-json
+                                                         └──> Distributed Tracing App
+                                                                 └──> DB
