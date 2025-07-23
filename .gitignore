@@ -21,10 +21,6 @@
 **/*.manifest
 **/*.spec
 
-# Ignore environment variable files
-**/.env
-**/.env.*
-
 # Ignore Jupyter Notebook checkpoints
 **/.ipynb_checkpoints
 
