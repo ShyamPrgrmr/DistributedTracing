@@ -1,18 +1,18 @@
 
 import os
 
-mysql_config:dict = {
-    'port': int(os.environ.get('MYSQL_PORT', 3306)),
-    'host': os.environ.get('MYSQL_HOST', 'localhost'),
-    'user': os.environ.get('MYSQL_USER'),
-    'password': os.environ.get('MYSQL_PASSWORD'),
-    'database': os.environ.get('MYSQL_DATABASE')
+postgresql_config: dict = {
+    'port': int(os.environ.get('POSTGRES_PORT', 5432)),
+    'host': os.environ.get('POSTGRES_HOST', 'localhost'),
+    'user': os.environ.get('POSTGRES_USER', 'dt_user'),
+    'password': os.environ.get('POSTGRES_PASSWORD', 'password@123'),
+    'dbname': os.environ.get('POSTGRES_DB', 'distributed_tracing')
 }
 
 redis_config:dict = {
-    'host': os.environ.get('REDIS_HOST'),
+    'host': os.environ.get('REDIS_HOST', 'localhost'),
     'port': int(os.environ.get('REDIS_PORT', 6379)),
-    'password': os.environ.get('REDIS_PASSWORD'),
+    'password': os.environ.get('REDIS_PASSWORD', 'Redis@123'),
     'decode_responses': True
 }
 
