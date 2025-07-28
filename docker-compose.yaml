@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
   kafka:
@@ -24,36 +24,47 @@ services:
     container_name: redis
     networks:
       - redis_net
+    restart: always
+    
+    #temporary for code use start
+    ports:
+      - "6379:6379"
+    #temporary for code use end
+
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
-      - /tmp/redis:/bitnami/redis
+      - redis_data:/bitnami/redis
 
-  mysql:
-    image: bitnami/mysql:latest
-    container_name: mysql
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: postgres
+    restart: always
+
+    #temporary for code use start
+    ports:
+      - "5432:5432"
+    #temporary for code use end
+
     environment:
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - POSTGRESQL_USERNAME=${POSTGRES_USER}
+      - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRESQL_DATABASE=${POSTGRES_DATABASE}
     volumes:
-      - /tmp/mysql/lib:/var/lib/mysql
-      #- /tmp/mysql/data:/bitnami/mysql
-      - ./DBs/mysql/init.sql:/tmp/init.sql
-      - ./DBs/mysql/startup.sh:/docker-entrypoint-initdb.d/startup.sh
-
+      - /tmp/postgressql:/bitnami/postgresql
+      - ./DBs/postgres:/docker-entrypoint-initdb.d
     networks:
-      - mysql_net
-    command: >
-      bash -c "/opt/bitnami/scripts/mysql/entrypoint.sh /opt/bitnami/scripts/mysql/run.sh"
+      - postgres_net
 
 networks:
   kafka_net:
     driver: bridge
   redis_net:
     driver: bridge
-  mysql_net:
+  postgres_net:
     driver: bridge
 
 
-  
+volumes:
+  redis_data:
+    driver: local
