@@ -6,4 +6,8 @@
 - [x] Set the approch
 - [x] Flow chart creation
 - [] Check possibility of containerizing all components using docker 
-- [] Trial and testing before implementation
+
+
+# TODO: Implementation
+- [x] Workspace creation
+- [] Coding and configuring the components.

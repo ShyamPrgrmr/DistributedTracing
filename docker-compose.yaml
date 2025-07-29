@@ -1,0 +1,92 @@
+version: "3.9"
+
+services:
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: ${KAFKA_HOST}
+    environment:
+      - KAFKA_ENABLE_KRAFT=true
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CFG_CLUSTER_ID=${KAFKA_CLUSTER_ID} # Unique cluster ID
+    volumes:
+      - /tmp/kafka:/bitnami/kafka
+    networks:
+      - kafka_net
+
+  redis:
+    image: bitnami/redis
+    container_name: ${REDIS_HOST}
+    networks:
+      - redis_net
+    restart: always
+    
+    #temporary for code use start
+    ports:
+      - "6379:6379"
+    #temporary for code use end
+
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/bitnami/redis
+
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: ${POSTGRES_HOST}
+    restart: always
+
+    #temporary for code use start
+    ports:
+      - "5432:5432"
+    #temporary for code use end
+
+    environment:
+      - POSTGRESQL_USERNAME=${POSTGRES_USER}
+      - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRESQL_DATABASE=${POSTGRES_DATABASE}
+    volumes:
+      - /tmp/postgressql/data:/bitnami/postgresql
+      - ./DBs/postgres:/docker-entrypoint-initdb.d
+    networks:
+      - postgres_net
+
+
+  redis-helper:
+    image: dt/redis-helper:latest
+    container_name: ${REDIS_HELPER_HOST}
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - redis_net
+      - postgres_net
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+      - TABLE_NAME=${TABLE_NAME}
+      - SCHEDULE_INTERVAL=${SCHEDULE_INTERVAL}
+
+networks:
+  kafka_net:
+    driver: bridge
+  redis_net:
+    driver: bridge
+  postgres_net:
+    driver: bridge
+
+
+volumes:
+  redis_data:
+    driver: local
