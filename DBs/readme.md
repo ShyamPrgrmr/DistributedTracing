@@ -4,6 +4,7 @@
 ```markdown
 1. This section contains all the database configuration used in this project.  
 Database: Mysql and redis
+```
 
 ## How to exec it?
 ```sql
@@ -17,4 +18,4 @@ distributed_tracing=> select * from application_partition_mapping;
 ----+----------------+--------------+------------+------------
 (0 rows)
 ```
-```
+

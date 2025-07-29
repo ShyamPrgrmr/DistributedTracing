@@ -1,8 +1,8 @@
 
 CREATE TABLE application_partition_mapping (
     id SERIAL PRIMARY KEY,
-    application_id INT NOT NULL,
-    partition_id INT NOT NULL,
+    application_id VARCHAR NOT NULL,
+    partition_id VARCHAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_app_partition UNIQUE (application_id, partition_id)

@@ -11,7 +11,8 @@
         * Client side
         * Server side 
     * Security Components - Firewalls/Identity and access management -  Ping 
-    * Networking components (Softwares) - DNS / NAT / VPCs / Internet Gateways / Direct Connect   
+    * Networking components (Softwares) - DNS / NAT / VPCs / Internet Gateways / Direct Connect 
+    * Databases  
 
 ## Important concepts
 1. Distributed Tracing - Mechanism to monitor the end to end request flow when it moves from on API to another API. It helps to identify the slowness/failures in Microservice flow. 

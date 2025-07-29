@@ -1,6 +1,12 @@
 
 import os
 
+schedule_config: dict = {
+    'intervalSecond': int(os.environ.get('SCHEDULE_INTERVAL', 10)),  # in seconds
+}
+
+table_name: str = os.environ.get('TABLE_NAME', 'application_partition_mapping')
+
 postgresql_config: dict = {
     'port': int(os.environ.get('POSTGRES_PORT', 5432)),
     'host': os.environ.get('POSTGRES_HOST', 'localhost'),
