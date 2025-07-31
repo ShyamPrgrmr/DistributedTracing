@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  micro_postgres:
+    image: bitnami/postgresql:latest
+    container_name: micro_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+
+    networks:
+      - distributedtracing_micro_net
+
+  service1:
+    build:
+      context: ./service1
+    container_name: service1
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVICE2_URL=http://service2:8080
+    depends_on:
+      - service2
+    networks:
+      - distributedtracing_micro_net
+
+  service2:
+    build:
+      context: ./service2
+    container_name: service2
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:micro_postgres://micro_postgres:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - micro_postgres
+    networks:
+      - distributedtracing_micro_net
+
+networks:
+  distributedtracing_micro_net:
+    driver: bridge

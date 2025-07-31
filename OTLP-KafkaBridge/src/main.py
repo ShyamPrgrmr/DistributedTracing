@@ -12,14 +12,21 @@ def health_check():
     return jsonify({"status": "healthy"}), 200
 
 
-@app.route('/exporter', methods=['POST'])
+@app.route('/v1/traces', methods=['POST'])
 def otlp_exporter():
-    data = request.json
+    if request.content_type != 'application/x-protobuf':
+        return jsonify({"error": "Unsupported Media Type"}), 415
+
+    data = request.get_data()
+    
     if not data:
         return jsonify({"error": "No data provided"}), 400
-    
-    logger.info(f"Received data: {data}")
-    return jsonify({"status": "received", "data": data}), 202
+
+    print("Headers : ", dict(request.headers))
+    print("data : ", data)
+
+    logger.info(f"Received protobuf data of length: {len(data)}")
+    return jsonify({"status": "received"}), 202
 
 
 if __name__ == '__main__':
