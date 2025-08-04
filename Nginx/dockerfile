@@ -1,0 +1,15 @@
+FROM bitnami/nginx:latest
+
+USER root
+
+COPY ./server_blocks/ /opt/bitnami/nginx/conf/server_blocks/
+
+COPY ./server_blocks/upstream.sh /docker-entrypoint-initdb.d/upstream.sh
+
+COPY nginx.conf /opt/bitnami/nginx/conf/nginx.conf
+
+RUN chmod +x /docker-entrypoint-initdb.d/upstream.sh
+RUN chown 1001:1001 /opt/bitnami/nginx/conf/server_blocks/*
+RUN chown 1001:1001 /opt/bitnami/nginx/conf/nginx.conf
+
+
