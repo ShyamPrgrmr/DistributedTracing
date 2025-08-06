@@ -44,7 +44,6 @@ services:
   postgres:
     image: bitnami/postgresql:latest
     container_name: ${POSTGRES_HOST}
-    restart: always
 
     #temporary for code use start
     ports:
@@ -83,7 +82,7 @@ services:
       - TABLE_NAME=${TABLE_NAME}
       - SCHEDULE_INTERVAL=${SCHEDULE_INTERVAL}
 
-  otlp-kafka-bridge:
+  otlp-kafka-bridge_1:
     image: dt/otlp-kafka-bridge:latest
     container_name: ${OTLP_KAFKA_BRIDGE_HOST}_1
     depends_on:
@@ -95,6 +94,7 @@ services:
       - kafka_net
       - postgres_net
       - micro_net
+      - lb_net
     environment:
       - HOST=${OTLP_KAFKA_BRIDGE_HOSTNAME}
       - PORT=${OTLP_KAFKA_BRIDGE_PORT}
@@ -108,6 +108,44 @@ services:
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
       - TABLE_NAME=${TABLE_NAME}
 
+  otlp-kafka-bridge_2:
+    image: dt/otlp-kafka-bridge:latest
+    container_name: ${OTLP_KAFKA_BRIDGE_HOST}_2
+    depends_on:
+      - redis
+      - kafka
+      - postgres
+    networks:
+      - redis_net
+      - kafka_net
+      - postgres_net
+      - micro_net
+      - lb_net
+    environment:
+      - HOST=${OTLP_KAFKA_BRIDGE_HOSTNAME}
+      - PORT=${OTLP_KAFKA_BRIDGE_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+      - TABLE_NAME=${TABLE_NAME}
+
+  otlp-kafka-bridge_lb:
+    image: dt/otlp_kafka_bridge_lb:latest
+    container_name: ${OTLP_KAFKA_BRIDGE_HOST}
+    environment:
+      - NGINX_OTLP_KAFKA_BRIDGE_LB_UPSTREAM=${NGINX_OTLP_KAFKA_BRIDGE_LB_UPSTREAM}
+    networks:
+      - lb_net
+      - micro_net
+    depends_on:
+      - otlp-kafka-bridge_1
+      - otlp-kafka-bridge_2
+
 # microservices - testing purposes only
   micro_postgres:
     image: bitnami/postgresql:latest
@@ -116,7 +154,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
-
     networks:
       - micro_net
 
@@ -128,7 +165,7 @@ services:
       - "8081:8081"
     environment:
       - SERVICE2_URL=http://service2:8080
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otlp-kafka-bridge:5000
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
       - OTEL_EXPORTER_OTLP_HEADERS=application=distributed_tracing
       - OTEL_RESOURCE_ATTRIBUTES=service.namespace=distributed_tracing
@@ -137,10 +174,9 @@ services:
       - OTEL_LOGS_EXPORTER=none
       - OTEL_METRICS_EXPORTER=none
       - OTEL_TRACES_EXPORTER=otlp
-
     depends_on:
       - service2
-      - otlp-kafka-bridge
+      - otlp-kafka-bridge_lb
     networks:
       - micro_net
     
@@ -154,7 +190,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://micro_postgres:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otlp-kafka-bridge:5000
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${NGINX_OTLP_KAFKA_BRIDGE_LB_HOST}:${NGINX_OTLP_KAFKA_BRIDGE_LB_PORT}
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
       - OTEL_EXPORTER_OTLP_HEADERS=application=distributed_tracing
       - OTEL_RESOURCE_ATTRIBUTES=service.namespace=distributed_tracing
@@ -166,7 +202,7 @@ services:
 
     depends_on:
       - micro_postgres
-      - otlp-kafka-bridge
+      - otlp-kafka-bridge_lb
     networks:
       - micro_net
 
@@ -182,7 +218,8 @@ networks:
     driver: bridge
   micro_net:
     driver: bridge
-
+  lb_net:
+    driver: bridge
 
 volumes:
   redis_data:

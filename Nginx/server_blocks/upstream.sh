@@ -13,4 +13,7 @@ done)
 }
 EOF
 
+
+echo "Upstream configuration written to upstream.conf $(echo -n upstream.conf)}"
+
 cat upstream.conf

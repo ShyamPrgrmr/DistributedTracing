@@ -22,8 +22,7 @@ def otlp_exporter():
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    print("Headers : ", dict(request.headers))
-    print("data : ", data)
+    
 
     logger.info(f"Received protobuf data of length: {len(data)}")
     return jsonify({"status": "received"}), 202
