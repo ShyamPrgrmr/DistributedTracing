@@ -51,11 +51,7 @@
 2. Flow
 App
   └──> OpenTelemetry Agent
-         └──> OTLP-Kafka Bridge (Protobuf)
-                 └──> Kafka Topic: otlp-protobuf
-                         └──> OpenTelemetry Collector
-                                 └──> Kafka Topic: otlp-json-protobuf
-                                         └──> Custom JSON Converter
-                                                 └──> Kafka Topic: clean-json
-                                                         └──> Distributed Tracing App
-                                                                 └──> DB
+         └──> OTLP-Kafka Bridge 
+                 └──> Kafka Topic: otlp-bridge-topic
+                        └──> Custom Trace Handles
+                                └──> DB
