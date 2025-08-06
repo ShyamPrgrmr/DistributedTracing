@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   kafka:
-    image: bitnami/kafka:latest
+    image: dt/kafka-cluster:latest
     container_name: ${KAFKA_HOST}
     #temporary for code use start
     ports:
@@ -19,6 +19,7 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=${KAFKA_CFG_CONTROLLER_QUORUM_VOTERS}
       - KAFKA_CFG_CLUSTER_ID=${KAFKA_CLUSTER_ID}
+      - KAFKA_TOPICS=${KAFKA_TOPICS}
     volumes:
       - /tmp/kafka:/bitnami/kafka
     networks:
@@ -207,7 +208,6 @@ services:
       - micro_net
 
 # microservices - testing purposes only
-
 
 networks:
   kafka_net:

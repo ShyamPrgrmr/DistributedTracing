@@ -18,3 +18,34 @@ redis_config:dict = {
     'password': os.environ.get('REDIS_PASSWORD', 'Redis@123'),
     'decode_responses': True
 }
+
+
+kafka_config: dict = {
+    'bootstrap_servers': os.environ.get('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092'),
+    'topic': os.environ.get('KAFKA_TOPIC', 'otlp-bridge-topic'),
+    'group_id': os.environ.get('KAFKA_GROUP_ID', 'otlp-bridge-group'),
+    'auto_offset_reset': os.environ.get('KAFKA_AUTO_OFFSET_RESET', 'earliest'),
+    'enable_auto_commit': os.environ.get('KAFKA_ENABLE_AUTO_COMMIT', 'true').lower() == 'true',
+    'value_deserializer': lambda x: x.decode('utf-8')
+}
+
+# Print the names of environment variables used in this file
+env_vars = [
+    'TABLE_NAME',
+    'PORT',
+    'HOST',
+    'POSTGRES_PORT',
+    'POSTGRES_HOST',
+    'POSTGRES_USER',
+    'POSTGRES_PASSWORD',
+    'POSTGRES_DB',
+    'REDIS_HOST',
+    'REDIS_PORT',
+    'REDIS_PASSWORD',
+    'KAFKA_BOOTSTRAP_SERVERS',
+    'KAFKA_TOPIC',
+    'KAFKA_GROUP_ID',
+    'KAFKA_AUTO_OFFSET_RESET',
+    'KAFKA_ENABLE_AUTO_COMMIT'
+]
+

@@ -14,6 +14,15 @@ class DBService:
             **postgresql_config
         )
 
+    def save_trace(self, trace_data: dict):
+        pass
+            
+    def save_metric(self, metric_data: dict):
+        pass
+
+    def save_log(self, log_data: dict):
+        pass
+
     def __check_redis_connectivity(self):
         try:
             return self.redis_client.ping()
@@ -50,9 +59,25 @@ class DBService:
             self.postgres_conn.close()
             self.logger.info("PostgreSQL connection closed.")
 
+    def get_from_redis(self, key: str):
+        try:
+            value = self.redis_client.get(key)
+            
+            if value is None:
+                self.logger.warning(f"Key {key} not found in Redis.")
+                return None
+            
+            value = value.decode('utf-8')
+            self.logger.info(f"Retrieved value for key {key} from Redis.")
+            return value
+
+        except Exception as e:
+            self.logger.error(f"Failed to get data from Redis: {e}")
+            return None
+
     def get_from_postgres(self, condition: str):
         try:
-            query = f"SELECT * FROM {table_name} WHERE {condition};"
+            query = f"SELECT * FROM {table_name} WHERE  {condition};"
             with self.postgres_conn.cursor() as cur:
                 cur.execute(query)
                 result = cur.fetchall()
