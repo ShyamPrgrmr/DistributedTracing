@@ -29,6 +29,8 @@ class ExporterService:
             app_id = self.get_app_id(resource_span)
             partition_id = self.db_service.get_from_redis(app_id)
 
+            logger.info(f"app_id: {app_id}, partition_id: {partition_id} is found in Redis.")
+
             if partition_id != None:
                 logger.info(f"Partition ID found for app_id: {app_id}, using Redis.")
                 result = self.kafka_service.produce_message(resource_span, partition=int(partition_id))
@@ -39,16 +41,22 @@ class ExporterService:
                     logger.info(f"Produced message to Kafka for app_id: {app_id} with partition: {partition_id}")
 
             else:
-                logger.warning(f"Partition ID not found for app_id: {app_id}, generating random partition ID.")
-                partition_id = random.randint(0, 100)
-                self.db_service.put_in_postgres({"application_id": app_id, "partition_id": str(partition_id)})
-                result = self.kafka_service.produce_message(resource_span, partition=partition_id)
+                try:
+                    logger.warning(f"Partition ID not found for app_id: {app_id}, generating a new partition ID.")
+                    partition_id = self.kafka_service.add_next_partition()
+                    logger.info(f"Generated new partition ID: {partition_id} for app_id: {app_id}.")
+                    self.db_service.put_in_postgres({"application_id": app_id, "partition_id": str(partition_id)})
+                    result = self.kafka_service.produce_message(resource_span, partition=partition_id)
 
-                if result is None:
-                    logger.error(f"Failed to produce message to Kafka for app_id: {app_id} with partition: {partition_id}")
-                else:
-                    logger.info(f"Produced message to Kafka for app_id: {app_id} with partition: {partition_id}")
+                    if result is None:
+                        logger.error(f"Failed to produce message to Kafka for app_id: {app_id} with partition: {partition_id}")
+                    else:
+                        logger.info(f"Produced message to Kafka for app_id: {app_id} with partition: {partition_id}")
 
+                except Exception as e:
+                    logger.error(f"Error while fetching partition ID for app_id: {app_id}, error: {e}")
+                    continue
+                
     def export_metrics(self, otlp_message):
         json_data = self.otlp_service.otlp_to_json(otlp_message)
         self.kafka_service.produce_message(json_data)
