@@ -5,7 +5,7 @@ CREATE TABLE application_partition_mapping (
     partition_id VARCHAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_app_partition UNIQUE (application_id, partition_id)
+    CONSTRAINT unique_app_partition UNIQUE (application_id)
 );
 
 -- Create trigger function

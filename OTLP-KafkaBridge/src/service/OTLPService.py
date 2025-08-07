@@ -1,5 +1,5 @@
 import json
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToDict # type: ignore
 
 
 

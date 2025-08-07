@@ -66,8 +66,8 @@ class DBService:
             if value is None:
                 self.logger.warning(f"Key {key} not found in Redis.")
                 return None
-            
-            value = value.decode('utf-8')
+
+            # value = value.decode('utf-8')
             self.logger.info(f"Retrieved value for key {key} from Redis.")
             return value
 
